@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script>
+      function handleShortUrlClick(event, id) {
+        window.open(`http://localhost:8000/url/${id}`, "_blank");
+        setTimeout(() => {
+          window.location.href = "/url";
+        }, 100);
+        event.preventDefault();
+      }
+    </script>
+    <style>
+      :root {
+        --primary: #6a1b9a;
+        --secondary: #fbc02d;
+        --dark: #3e0d1e;
+        --light: #f5f5f5;
+        --accent: #9c27b0;
+        --table-bg: rgba(255, 255, 255, 0.05);
+        --table-header: rgba(106, 27, 154, 0.7);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: var(--dark);
+        color: var(--light);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+      
+      /* User profile styling */
+      .user-profile {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 8px 15px;
+        border-radius: 50px;
+        cursor: pointer;
+      }
+      
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--light);
+        font-size: 1.2rem;
+        margin-right: 10px;
+      }
+      
+      .user-info {
+        margin-right: 10px;
+      }
+      
+      .user-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      
+      .user-email {
+        font-size: 0.7rem;
+        opacity: 0.8;
+      }
+      
+      .logout-btn {
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      
+      .logout-btn:hover {
+        background-color: #7b1fa2;
+      }
+
+      .head {
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      h1 {
+        color: var(--secondary);
+        background-color: var(--primary);
+        padding: 15px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 2rem;
+        letter-spacing: 1px;
+        margin-bottom: 30px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .url-display {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        word-break: break-all;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .url-display p {
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+
+      .url-display a {
+        color: var(--secondary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.2rem;
+        transition: all 0.2s ease;
+      }
+
+      .url-display a:hover {
+        text-decoration: underline;
+        color: #ffd600;
+      }
+
+      form {
+        background-color: var(--accent);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--light);
+        font-size: 1.1rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--light);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--secondary);
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .btn-container {
+        text-align: center;
+      }
+
+      button {
+        background-color: var(--secondary);
+        color: var(--dark);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        background-color: #ffd600;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .history-container {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 30px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: var(--table-bg);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.5s ease;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      th {
+        background-color: var(--table-header);
+        color: var(--light);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+      }
+
+      tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      td {
+        color: var(--light);
+      }
+
+      td:nth-child(3) {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      td:nth-child(4) {
+        text-align: center;
+        color: var(--secondary);
+        font-weight: 600;
+      }
+
+      @media (max-width: 768px) {
+        form {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+          padding: 10px 20px;
+        }
+
+        th,
+        td {
+          padding: 10px 8px;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>  <body>
+    <!-- User Profile Section -->
+    <div class="user-profile">
+      <div class="user-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <div class="user-name"><%= user.name %></div>
+        <div class="user-email"><%= user.email %></div>
+      </div>
+      <form action="/user/logout" method="POST" style="display: inline;">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </div>
+    
+    <div class="head">
+      <h1>URL Shortener</h1>
+    </div>
+    <div class="container">
+      <% if (locals.id) { %>
+      <div class="url-display">
+        <p>Your shortened URL:</p>
+        <a
+          href="http://localhost:8000/url/<%= id %>"
+          target="_blank"
+          onclick="handleShortUrlClick(event, '<%= id %>')"
+        >
+          https://localhost:8000/url/<%= id %>
+        </a>
+      </div>
+      <% } %>
+
+      <form method="post" action="/url">
+        <div class="form-group">
+          <label for="url">Enter URL to shorten:</label>
+          <input
+            type="text"
+            name="url"
+            id="url"
+            placeholder="https://example.com"
+            required
+          />
+        </div>
+
+        <div class="btn-container">
+          <button type="submit">Generate Short URL</button>
+        </div>
+      </form>
+
+      <% if (locals.urls && urls.length > 0) { %>
+      <div class="history-container">
+        <h2 style="margin-bottom: 15px; color: var(--secondary)">
+          URL History
+        </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Short URL</th>
+              <th>Original URL</th>
+              <th>Clicks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% urls.forEach((url, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td>
+                <a
+                  href="http://localhost:8000/url/<%= url.shortID %>"
+                  target="_blank"
+                  style="color: var(--secondary)"
+                >
+                  http://localhost:8000/url/<%= url.shortID %>
+                </a>
+              </td>
+              <td title="<%= url.redirectURL %>">
+                <a
+                  href="<%= url.redirectURL %>"
+                  target="_blank"
+                  style="color: var(--light); text-decoration: none"
+                >
+                  <%= url.redirectURL %>
+                </a>
+              </td>
+              <td><%= url.visitHistory.length %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+    </div>
+  </body>
+</html>

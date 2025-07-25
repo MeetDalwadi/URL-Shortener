@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP - URL Shortener</title>
+  <style>
+    :root {
+      --primary: #6a1b9a;
+      --secondary: #fbc02d;
+      --dark: #3e0d1e;
+      --light: #f5f5f5;
+      --accent: #9c27b0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+      text-align: center;
+    }
+    
+    h1 {
+      color: var(--primary);
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .otp-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    
+    .otp-input {
+      width: 45px;
+      height: 45px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .otp-input:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    
+    button:hover {
+      background-color: var(--accent);
+    }
+    
+    .resend {
+      margin-top: 20px;
+      color: #777;
+    }
+    
+    .resend button {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      padding: 0;
+      width: auto;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    
+    .resend button:hover {
+      color: var(--accent);
+      background: none;
+    }
+    
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Email Verification</h1>
+    <p>We've sent a verification code to <strong><%= email %></strong></p>
+    
+    <% if (locals.error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+    
+    <div style="background-color: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+      <p style="color: #2e7d32; font-weight: 600; margin: 0 0 8px 0;">OTP Sent!</p>
+      <p style="margin: 0; font-size: 0.9rem;">
+        A verification code has been sent to your email address. Please check your inbox and spam folder.
+      </p>
+    </div>
+    
+    <form action="/auth/verify-otp" method="POST" id="otpForm">
+      <input type="hidden" name="email" value="<%= email %>">
+      
+      <div class="otp-container">
+        <input type="text" class="otp-input" maxlength="1" autofocus>
+        <input type="text" class="otp-input" maxlength="1">
+        <input type="text" class="otp-input" maxlength="1">
+        <input type="text" class="otp-input" maxlength="1">
+        <input type="text" class="otp-input" maxlength="1">
+        <input type="text" class="otp-input" maxlength="1">
+        <input type="hidden" name="otp" id="otpValue">
+      </div>
+      
+      <button type="submit">Verify</button>
+    </form>
+    
+    <div class="resend">
+      Didn't receive the code? 
+      <form action="/auth/resend-otp" method="POST" style="display: inline;">
+        <input type="hidden" name="email" value="<%= email %>">
+        <button type="submit">Resend</button>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    // Handle OTP input focus movement
+    const inputs = document.querySelectorAll('.otp-input');
+    const form = document.getElementById('otpForm');
+    const otpValue = document.getElementById('otpValue');
+    
+    inputs.forEach((input, index) => {
+      input.addEventListener('keyup', (e) => {
+        if (e.key >= 0 && e.key <= 9) {
+          // Move to next input if available
+          if (index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        } else if (e.key === 'Backspace') {
+          // Move to previous input if available
+          if (index > 0) {
+            inputs[index - 1].focus();
+          }
+        }
+        
+        // Combine all inputs into the hidden field
+        let otp = '';
+        inputs.forEach(input => {
+          otp += input.value;
+        });
+        otpValue.value = otp;
+      });
+    });
+    
+    // Submit form when all digits are entered
+    inputs[5].addEventListener('keyup', (e) => {
+      if (e.key >= 0 && e.key <= 9) {
+        let allFilled = true;
+        inputs.forEach(input => {
+          if (!input.value) {
+            allFilled = false;
+          }
+        });
+        
+        if (allFilled) {
+          form.submit();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
