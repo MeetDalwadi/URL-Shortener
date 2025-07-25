@@ -1,6 +1,12 @@
 const express = require("express");
+require('dotenv').config();
+
+// Environment validation
+const { checkEnvironment } = require('./utils/envCheck');
+checkEnvironment();
+
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
@@ -12,7 +18,7 @@ const { connectMongoDb } = require("./connection");
 const { restrictToLoggedinUserOnly } = require("./middlewares/auth.js");
 
 // Connect to MongoDB
-connectMongoDb("mongodb://127.0.0.1:27017/learning-SortURL")
+connectMongoDb(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/learning-SortURL")
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(`MongoDB Error: ${err}`));
 
@@ -25,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
-  secret: 'urlShortenerSecret',
+  secret: process.env.SESSION_SECRET || 'urlShortenerSecret',
   resave: false,
   saveUninitialized: true,
   cookie: { 
@@ -33,6 +39,12 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
+
+// Make BASE_URL available to all views
+app.use((req, res, next) => {
+  res.locals.baseUrl = process.env.BASE_URL || `http://localhost:${port}`;
+  next();
+});
 
 // Routes
 app.use("/", staticRouter);
@@ -42,5 +54,5 @@ app.use("/url", restrictToLoggedinUserOnly, urlRoute);
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server started at \nhttp://localhost:${port}`);
+  console.log(`Server started at \n${process.env.BASE_URL || `http://localhost:${port}`}`);
 });

@@ -2,6 +2,10 @@
 
 A practical URL shortening service built with Node.js, Express, and MongoDB that demonstrates advanced concepts like URL routing, redirection, and click analytics tracking.
 
+## 🚀 Deploy to Vercel
+
+This project is ready for deployment! See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete instructions on deploying to Vercel.
+
 ## What's in this Project?
 
 This project implements a complete URL shortening service similar to Bitly or TinyURL with these features:

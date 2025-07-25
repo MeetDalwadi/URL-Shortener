@@ -3,20 +3,28 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "echo 'No build step required for this project'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "URL Shortener application with user authentication",
   "dependencies": {
     "cookie-parser": "^1.4.7",
+    "dotenv": "^16.3.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "mongoose": "^8.16.0",
     "nodemailer": "^7.0.3",
-    "nodemon": "^3.1.10",
     "shortid": "^2.2.17",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
